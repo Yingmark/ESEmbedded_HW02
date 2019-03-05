@@ -29,7 +29,7 @@ HW02 範例
 
 main.s:
 
-```=8
+```assembly
 _start:
 	nop
 
