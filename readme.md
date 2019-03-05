@@ -125,7 +125,7 @@ remote Thread 1 In:                                                             
 
 ## 3. 結果與討論
  1. 使用 `bl` 時會儲存 `pc` 下一行指令的位置到 `lr` 中，通常用來進行副程式的呼叫，副程式結束要返回主程式時，可以執行 `bx lr`，返回進入副程式前下一行指令的位置。
- 2. 使用 `bl` 時，linker 就把 pc+1 寫入 `lr` 的值，所以為 0x12+1 = 0x13
+ 2. 由於使用 [Cortex-M4](https://developer.arm.com/products/processors/cortex-m/cortex-m4) ，只支援 Thumb/ Thumb-2 指令，使用 `bl` 時，linker 就把 pc+1 寫入 `lr` 的值，所以為 0x12+1 = 0x13，`lr` 的 LSB 為 1 ，未來使用 `bx lr` 等指令時能確保是在 Thumb/ Thumb-2 指令下執行。
 
 
  [Linker User Guide: --entry=location](http://www.keil.com/support/man/docs/armlink/armlink_pge1362075463332.htm)
