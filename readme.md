@@ -23,8 +23,8 @@ HW02 範例
 
     * The BL and BLX instructions copy the address of the next instruction into LR (R14, the link register)
 
-3. 測試程式 main.s 從 _start 開始依序執行 b 以及 bl 並且觀察其指令差異
-目標比較 14 行的 `b	label01` 以及 22 行的 `bl	sleep` 執行時的差別。
+3. 設計測試程式 main.s ，從 _start 開始後依序執行 b 以及 bl 並且觀察其指令差異，
+目標比較 14 行的 `b	label01` 以及 22 行的 `bl	sleep` 執行時的變化。
 
 
 main.s:
