@@ -26,7 +26,7 @@ HW02 作業
 3. 在測試程式時, 目標指令`push {r0, r1, r2}`及指令`push{r2, r0, r1}`是否有相同行為,發現在`make`時會發生錯誤,
 因此執行`push`指令時, 需要按照先後順序排列。
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/error_make.jpg)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/error_make.png)
 
 4. 設計測試程式 main.s ，從 _start 開始後依序執行`movs`指令的搬移，目標觀看指令`push {r0, r1, r2}`觀看哪個暫存器先行壓入堆棧中。
 
