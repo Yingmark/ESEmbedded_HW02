@@ -1,49 +1,52 @@
-HW02 範例
+HW02 作業
 ===
-## 1. 實驗題目 (範例)
-撰寫簡易組語觀察 b, bl 兩指令之差異。
+## 1. 作業HW02_題目
+1. 修改main.s以觀察`push`和`pop`指令。
+2. 指令`push`和 `pop`中的暫存器順序是否會影響執行結果。
+3. 指令`push`和`pop`動作說明。
+
 ## 2. 實驗步驟
-1. 先將資料夾 gnu-mcu-eclipse-qemu 完整複製到 ESEmbedded_HW02 資料夾中
+1. 先將資料夾gnu-mcu-eclipse-qemu完整複製到ESEmbedded_HW02_Example資料夾中
 
-2. 根據 [ARM infomation center](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489e/Cihfddaf.html) 敘述的 b, bl 用法與差異
+2. 根據 http://www.nc.es.ncku.edu.tw/course/embedded/02/ - Processor Core Register Summary 敘述
 
-    * op1{cond}{.W} label
+    1. ARM Cortex-M4 處理器具有 32bits 暫存器
+	* 13個一般暫存器, 其中R0~R7為低位元暫存器, R8~R12為高位元暫存器。
+	* R13 為 Stack Pointer(SP)分`SP_process`和`SP_main`.
+	* R14 為 Link Register(LR).
+	* R15 為 Program Counter(PC).
+	* XPSR 為 Special-purpose Program Status Registers.
+    2. `push`和`pop`都使用 R13暫存器作為基址堆疊操作。
+    3. `push`和`pop`差異性：
+	 `push`指令, 舉例`push {r0}`時, 把`r0`放入`R13`暫存器當中, 而每放入一次Stack Pointer - 4bytes.
+	 `pop`指令, 舉例`pop {r0}`時, 從`R13`取出資料放入`r0`當中, 而每取出一次Stack Pointer + 4bytes.
 
-        op1
-        is one of:
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/push_pop.jpg)
 
-        B
-        Branch.
+3. 在測試程式時, 目標指令`push {r0, r1, r2}`及指令`push{r2, r0, r1}`是否有相同行為,發現在`make`時會發生錯誤,
+因此執行`push`指令時, 需要按照先後順序排列。
 
-        BL
-        Branch with link.
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/error_make.jpg)
 
-        BLX
-        Branch with link, and exchange instruction set.
-
-    * The BL and BLX instructions copy the address of the next instruction into LR (R14, the link register)
-
-3. 設計測試程式 main.s ，從 _start 開始後依序執行 b 以及 bl 並且觀察其指令差異，
-目標比較 14 行的 `b	label01` 以及 22 行的 `bl	sleep` 執行時的變化。
-
+4. 設計測試程式 main.s ，從 _start 開始後依序執行`movs`指令的搬移，目標觀看指令`push {r0, r1, r2}`觀看哪個暫存器先行壓入堆棧中。
 
 main.s:
-
 ```assembly
 _start:
-	nop
+	movs r0, #100
+	movs r1, #50
+	mov  r2, #102
 
-	//
-	//branch w/o link
-	//
+	push {r0, r1, r2}
+
+	pop {r3}
+	pop {r4}
+	pop {r5}
+
 	b	label01
 
 label01:
 	nop
-
-	//
-	//branch w/ link
-	//
 	bl	sleep
 
 sleep:
@@ -53,23 +56,22 @@ sleep:
 
 4. 將 main.s 編譯並以 qemu 模擬， `$ make clean`, `$ make`, `$ make qemu`
 開啟另一 Terminal 連線 `$ arm-none-eabi-gdb` ，再輸入 `target remote localhost:1234` 連接，輸入兩次的 `ctrl + x` 再輸入 `2`, 開啟 Register 以及指令，並且輸入 `si` 單步執行觀察。
-當執行到 `0xa` 的 `b.n    0xc ` 時， `pc` 跳轉至 `0x0c` ，除了 branch 外並無變化。
 
-![](https://github.com/vwxyzjimmy/ESEmbedded_HW02/blob/master/img-folder/0x0a.jpg)
+當未開始時, sp 為 `0x20000100`，其他並無變化。
 
-當執行到 `0x0e` 的 `bl     0x12` 後，會發現 `lr`  更新為 `0x13`。
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/01.png)
 
-![](https://github.com/vwxyzjimmy/ESEmbedded_HW02/blob/master/img-folder/0x12.jpg)
+當執行`push {r0, r1, r2}`時, sp為`0x200000f4`, 每放入一次Stack Pointer位置減4bytes。
+
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/02.png)
+
+而執行`pop {r3}`, `pop {r4}`, `pop {r5}`時, 資料依序從取出。
+
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/04.png)
 
 ## 3. 結果與討論
-1. 使用 `bl` 時會儲存 `pc` 下一行指令的位置到 `lr` 中，通常用來進行副程式的呼叫，副程式結束要返回主程式時，可以執行 `bx lr`，返回進入副程式前下一行指令的位置。
-2. 根據 [Cortex-M4-Arm Developer](https://developer.arm.com/products/processors/cortex-m/cortex-m4)，由於 Cortex-M4 只支援 Thumb/ Thumb-2 指令，使用 `bl` 時，linker 自動把 pc 下一行指令位置並且設定 LSB 寫入 `lr` ，未來使用 `bx lr` 等指令時，由於 `lr` 的 LSB 為 1 ，能確保是在 Thumb/ Thumb-2 指令下執行後續指令。
-以上述程式為例， `bl     0x12` 下一行指令位置為  0x12 並設定 LSB 為 1 ，所以寫入 0x13 至 `lr` 。
-
-
- [Linker User Guide: --entry=location](http://www.keil.com/support/man/docs/armlink/armlink_pge1362075463332.htm)
-```
-Note
-If the entry address of your image is in Thumb state, then the least significant bit of the address must be set to 1.
-The linker does this automatically if you specify a symbol.
-```
+1. 上述針對`push`, `pop`指令進行說明, 舉例執行`push {r0, r1, r2}`指令時, 會先把`r2`暫存器存入, 再來
+依序`r1`->`r0`; 而取出時執行指令`pop {r3}`, 符合先進後出, 先`push {r0}`取出至`pop {r3}`, 依序將`push {r1}`
+取至`pop {r4}`, `push {r2}`取至`pop {r5}`。
+2. 指令`push`等同於`str rx, [sp, #-4]!`.
+3. 指令`pop` 等同於`ldr rx, [sp], #4`.
