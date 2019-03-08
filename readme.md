@@ -21,12 +21,12 @@ HW02 作業
 	 `push`指令, 舉例`push {r0}`時, 把`r0`放入`R13`暫存器當中, 而每放入一次Stack Pointer - 4bytes.
 	 `pop`指令, 舉例`pop {r0}`時, 從`R13`取出資料放入`r0`當中, 而每取出一次Stack Pointer + 4bytes.
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/push_pop.jpg)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/push_pop.jpg)
 
 3. 在測試程式時, 目標指令`push {r0, r1, r2}`及指令`push{r2, r0, r1}`是否有相同行為,發現在`make`時會發生錯誤,
 因此執行`push`指令時, 需要按照先後順序排列。
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/error_make.jpg)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/error_make.jpg)
 
 4. 設計測試程式 main.s ，從 _start 開始後依序執行`movs`指令的搬移，目標觀看指令`push {r0, r1, r2}`觀看哪個暫存器先行壓入堆棧中。
 
@@ -59,15 +59,15 @@ sleep:
 
 當未開始時, sp 為 `0x20000100`，其他並無變化。
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/01.png)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/01.png)
 
 當執行`push {r0, r1, r2}`時, sp為`0x200000f4`, 每放入一次Stack Pointer位置減4bytes。
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/02.png)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/02.png)
 
 而執行`pop {r3}`, `pop {r4}`, `pop {r5}`時, 資料依序從取出。
 
-![](https://github.com/Yingmark/ESEmbedded_HW02_Example/img-folder/04.png)
+![](https://github.com/Yingmark/ESEmbedded_HW02_Example/blob/master/img-folder/04.png)
 
 ## 3. 結果與討論
 1. 上述針對`push`, `pop`指令進行說明, 舉例執行`push {r0, r1, r2}`指令時, 會先把`r2`暫存器存入, 再來
