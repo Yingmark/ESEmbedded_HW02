@@ -11,7 +11,7 @@ HW02 作業
 2. 根據 http://www.nc.es.ncku.edu.tw/course/embedded/02/ - Processor Core Register Summary 敘述
 
     1. ARM Cortex-M4 處理器具有 32bits 暫存器
-	* 13個一般暫存器, 其中R0~R7為低位元暫存器, R8~R12為高位元暫存器。
+	* 13個一般暫存器, 其中R0-R7為低位元暫存器, R8-R12為高位元暫存器。
 	* R13 為 Stack Pointer(SP)分`SP_process`和`SP_main`.
 	* R14 為 Link Register(LR).
 	* R15 為 Program Counter(PC).
